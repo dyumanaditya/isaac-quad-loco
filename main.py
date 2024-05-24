@@ -29,14 +29,16 @@ def main():
 	env_cfg = parse_env_cfg(args_cli.task, use_gpu=not args_cli.cpu, num_envs=args_cli.num_envs)
 
 	# Create the environment
-	env = gym.make(args_cli.task, cfg=env_cfg)
+	env = gym.make(args_cli.task, cfg=env_cfg, render_mode="rgb_array" if args_cli.video else None)
 
 	# Create the hyperparameters object
 	hyperparameters = Hyperparameters()
 
 	# Create the agent
 	device = 'gpu' if not args_cli.cpu else 'cpu'
-	agent = PPO(env, hyperparameters, log_dir='logs', device=device)
+	agent = PPO(env, hyperparameters,
+				log_dir='logs', device=device,
+				record_video=args_cli.video, video_length=args_cli.video_length, video_save_freq=args_cli.video_interval)
 
 	# Learn
 	agent.learn(max_steps=2000)
