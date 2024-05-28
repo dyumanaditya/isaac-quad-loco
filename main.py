@@ -19,6 +19,8 @@ args_cli = parser.parse_args()
 app_launcher = AppLauncher(args_cli)
 simulation_app = app_launcher.app
 
+from envs.velocity.velocity_env_cfg import ActionsEffortCfg
+
 # Import the necessary modules after Isaac Sim is launched
 from omni.isaac.orbit_tasks.utils import parse_env_cfg
 
@@ -27,6 +29,9 @@ def main():
 	# Parse the arguments
 	# Environment configuration
 	env_cfg = parse_env_cfg(args_cli.task, use_gpu=not args_cli.cpu, num_envs=args_cli.num_envs)
+
+	# Modify the action space to be our joint effort instead of joint position
+	# env_cfg.actions = ActionsEffortCfg()
 
 	# Create the environment
 	env = gym.make(args_cli.task, cfg=env_cfg, render_mode="rgb_array" if args_cli.video else None)
