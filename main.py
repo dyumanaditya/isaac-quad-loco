@@ -38,6 +38,9 @@ def main():
 
 	# Create the hyperparameters object
 	hyperparameters = Hyperparameters()
+	hyperparameters.actor_hidden_sizes = [128, 128, 128]
+	hyperparameters.critic_hidden_sizes = [128, 128, 128]
+	hyperparameters.num_transitions_per_env = 24
 
 	# Create the agent
 	device = 'gpu' if not args_cli.cpu else 'cpu'
@@ -46,8 +49,8 @@ def main():
 				record_video=args_cli.video, video_length=args_cli.video_length, video_save_freq=args_cli.video_interval)
 
 	# Learn
-	agent.learn(max_steps=2000)
-	# agent.simulate('policies/ppo_actor_critic_19660800.pth')
+	agent.learn(max_steps=1000)
+	# agent.simulate('/home/dyuman/Downloads/model_100.pt')
 
 
 if __name__ == '__main__':
