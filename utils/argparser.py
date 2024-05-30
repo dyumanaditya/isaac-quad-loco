@@ -14,6 +14,7 @@ def get_argparser():
 	parser.add_argument("--video_interval", type=int, default=1000, help="Interval between video recordings (in steps).")
 	parser.add_argument("--mode", type=str, default="rl", help="Mode to run the script in. Options: rl, mpc, rl-mpc")
 	parser.add_argument("--play_mode", action="store_true", default=False, help="Play mode to visualize a trained policy.")
-	parser.add_argument("--max_steps", type=int, default=1000, help="Maximum number of steps to run the training for. (only applied for rl or rl+mpc mode)")
+	parser.add_argument("--max_steps", type=int, default=None, help="Maximum number of steps to run the training for. (only applied for rl or rl+mpc mode)")
+	parser.add_argument("--policy_file", type=str, default=None, help="Policy file to load for playing.")
 
 	return parser

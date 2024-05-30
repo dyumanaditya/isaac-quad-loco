@@ -1,13 +1,11 @@
-from isaac_ppo import PPO, Hyperparameters
+from isaac_ppo import PPO
 from utils.utils import most_recently_modified_directory, most_recently_modified_policy
+from controllers.rl.hyperparameters import get_flat_hyperparameters
 
 
-def play_rl(env, args_cli, policy_file_path=None):
+def play_rl(env, args_cli):
 	# Create the hyperparameters object
-	hyperparameters = Hyperparameters()
-	hyperparameters.actor_hidden_sizes = [128, 128, 128]
-	hyperparameters.critic_hidden_sizes = [128, 128, 128]
-	hyperparameters.num_transitions_per_env = 24
+	hyperparameters = get_flat_hyperparameters()
 
 	# Create the agent
 	device = 'gpu' if not args_cli.cpu else 'cpu'
@@ -17,10 +15,10 @@ def play_rl(env, args_cli, policy_file_path=None):
 
 	# Simulate
 	# Find the most recently modified policy file
-	if policy_file_path is None:
+	if args_cli.policy_file_path is None:
 		most_recent_log = most_recently_modified_directory('./logs')
 		policy_file = most_recently_modified_policy(most_recent_log)
 	else:
-		policy_file = policy_file_path
+		policy_file = args_cli.policy_file_path
 
 	agent.simulate(policy_file)

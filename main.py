@@ -53,7 +53,7 @@ def main():
 	# Decide which controller to use.
 	# Use the RL controller
 	if args_cli.mode == "rl":
-		if 'rough' in args_cli.task:
+		if 'Rough' in args_cli.task:
 			if args_cli.play_mode:
 				play_rl_rough(env, args_cli)
 			else:
