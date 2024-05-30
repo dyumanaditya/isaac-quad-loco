@@ -1,4 +1,4 @@
-# Quadruped Locomotion
+# Quadruped Locomotion in Isaac Sim
 Quadruped Locomotion learning through Reinforcement Learning and Model Predictive Control
 
 ## Installation
