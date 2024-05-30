@@ -1,11 +1,21 @@
 import gymnasium as gym
-from isaac_ppo import PPO, Hyperparameters
 
 from omni.isaac.orbit.app.app_launcher import AppLauncher
 from utils.argparser import get_argparser
 
+# Import controllers
+# RL
+from controllers.rl.flat.train import train_rl as train_rl_flat
+from controllers.rl.flat.play import play_rl as play_rl_flat
+from controllers.rl.rough.train import train_rl as train_rl_rough
+from controllers.rl.rough.play import play_rl as play_rl_rough
+
+# MPC
+
+# RL+MPC
+
 """
-Launch Isaac Sim as global variables
+START Launch Isaac Sim as global variables
 """
 parser = get_argparser()
 
@@ -19,10 +29,14 @@ args_cli = parser.parse_args()
 app_launcher = AppLauncher(args_cli)
 simulation_app = app_launcher.app
 
-from envs.velocity.velocity_env_cfg import ActionsEffortCfg
+# from envs.velocity.velocity_env_cfg import ActionsEffortCfg
 
 # Import the necessary modules after Isaac Sim is launched
 from omni.isaac.orbit_tasks.utils import parse_env_cfg
+
+"""
+END Launch Isaac Sim as global variables
+"""
 
 
 def main():
@@ -36,21 +50,27 @@ def main():
 	# Create the environment
 	env = gym.make(args_cli.task, cfg=env_cfg, render_mode="rgb_array" if args_cli.video else None)
 
-	# Create the hyperparameters object
-	hyperparameters = Hyperparameters()
-	hyperparameters.actor_hidden_sizes = [128, 128, 128]
-	hyperparameters.critic_hidden_sizes = [128, 128, 128]
-	hyperparameters.num_transitions_per_env = 24
+	# Decide which controller to use.
+	# Use the RL controller
+	if args_cli.mode == "rl":
+		if 'rough' in args_cli.task:
+			if args_cli.play_mode:
+				play_rl_rough(env, args_cli)
+			else:
+				train_rl_rough(env, args_cli)
+		else:
+			if args_cli.play_mode:
+				play_rl_flat(env, args_cli)
+			else:
+				train_rl_flat(env, args_cli)
 
-	# Create the agent
-	device = 'gpu' if not args_cli.cpu else 'cpu'
-	agent = PPO(env, hyperparameters,
-				log_dir='logs', device=device,
-				record_video=args_cli.video, video_length=args_cli.video_length, video_save_freq=args_cli.video_interval)
+	# Use the MPC controller
+	elif args_cli.mode == "mpc":
+		pass
 
-	# Learn
-	agent.learn(max_steps=1000)
-	# agent.simulate('/home/dyuman/Downloads/model_100.pt')
+	# Use the hybrid RL+MPC controller
+	elif args_cli.mode == "rl-mpc":
+		pass
 
 
 if __name__ == '__main__':
