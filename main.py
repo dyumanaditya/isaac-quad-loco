@@ -11,6 +11,7 @@ from controllers.rl.rough.train import train_rl as train_rl_rough
 from controllers.rl.rough.play import play_rl as play_rl_rough
 
 # MPC
+from controllers.mpc.mpc import run_mpc
 
 # RL+MPC
 
@@ -29,7 +30,7 @@ args_cli = parser.parse_args()
 app_launcher = AppLauncher(args_cli)
 simulation_app = app_launcher.app
 
-# from envs.velocity.velocity_env_cfg import ActionsEffortCfg
+from envs.mpc.velocity.velocity_flat_env_cfg import MPCActionsEffortCfg, MPCObservationsCfg
 
 # Import the necessary modules after Isaac Sim is launched
 from omni.isaac.orbit_tasks.utils import parse_env_cfg
@@ -44,8 +45,13 @@ def main():
 	# Environment configuration
 	env_cfg = parse_env_cfg(args_cli.task, use_gpu=not args_cli.cpu, num_envs=args_cli.num_envs)
 
-	# Modify the action space to be our joint effort instead of joint position
-	# env_cfg.actions = ActionsEffortCfg()
+	# Modify the environment configuration for mpc and rl-mpc
+	if args_cli.mode == "mpc":
+		env_cfg.actions = MPCActionsEffortCfg()
+		env_cfg.observations = MPCObservationsCfg()
+		env_cfg.scene.num_envs = 1
+	elif args_cli.mode == "rl-mpc":
+		pass
 
 	# Create the environment
 	env = gym.make(args_cli.task, cfg=env_cfg, render_mode="rgb_array" if args_cli.video else None)
@@ -66,7 +72,7 @@ def main():
 
 	# Use the MPC controller
 	elif args_cli.mode == "mpc":
-		pass
+		run_mpc(env, use_gpu=not args_cli.cpu)
 
 	# Use the hybrid RL+MPC controller
 	elif args_cli.mode == "rl-mpc":

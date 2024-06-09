@@ -15,10 +15,10 @@ def play_rl(env, args_cli):
 
 	# Simulate
 	# Find the most recently modified policy file
-	if args_cli.policy_file_path is None:
+	if args_cli.policy_file is None:
 		most_recent_log = most_recently_modified_directory('./logs')
 		policy_file = most_recently_modified_policy(most_recent_log)
 	else:
-		policy_file = args_cli.policy_file_path
+		policy_file = args_cli.policy_file
 
 	agent.simulate(policy_file)
